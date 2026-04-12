@@ -11,7 +11,6 @@
             --card: #1e293b;
             --accent: #3b82f6;
             --hover: #2563eb;
-            --fullscreen-bg: #10b981; /* Tam ekran butonu için yeşil tonu */
             --text: #f8fafc;
         }
 
@@ -66,6 +65,7 @@
             font-size: 16px;
         }
 
+        /* Tüm butonlar için ortak stil */
         .btn {
             background: var(--accent);
             color: white;
@@ -76,15 +76,10 @@
             font-weight: bold;
             width: 100%;
             transition: 0.3s;
+            margin-bottom: 5px; /* Butonlar arası boşluk */
         }
 
-        /* Tam Ekran Butonuna Özel Stil */
-        .btn-fullscreen {
-            background: var(--fullscreen-bg);
-            margin-top: 2px; /* İki buton arası küçük boşluk */
-        }
-
-        .btn:hover { opacity: 0.9; }
+        .btn:hover { background: var(--hover); }
 
         #playlist {
             list-style: none;
@@ -118,8 +113,8 @@
         <video id="video" controls playsinline></video>
     </div>
 
-    <button class="btn" onclick="loadM3U()">Listeyi Yükle</button>
-    <button class="btn btn-fullscreen" onclick="openFullscreen()">Tam Ekran Yap</button>
+    <button class="btn" onclick="loadM3U()">Çalma Listesini Yükle / Yenile</button>
+    <button class="btn" onclick="openFullscreen()">Tam Ekran Yap</button>
 
     <input type="text" id="searchInput" class="search-box" placeholder="Kanal ara..." onkeyup="filterPlaylist()">
     <ul id="playlist"></ul>
@@ -131,7 +126,6 @@
     const m3uUrl = 'https://raw.githubusercontent.com/absol12/reptv/refs/heads/main/01.m3u';
     let hls = new Hls();
 
-    // Tam Ekran Fonksiyonu
     function openFullscreen() {
         if (video.requestFullscreen) {
             video.requestFullscreen();
@@ -195,10 +189,3 @@
         const items = playlistContainer.getElementsByTagName('li');
         for (let i = 0; i < items.length; i++) {
             const text = items[i].textContent.toLowerCase();
-            items[i].classList.toggle('hidden', !text.includes(filter));
-        }
-    }
-</script>
-
-</body>
-</html>
