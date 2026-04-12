@@ -14,10 +14,7 @@
             --text: #f8fafc;
         }
 
-        /* Tüm elemanlar için padding ve border'ı genişliğe dahil et */
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -39,20 +36,19 @@
             gap: 10px;
         }
 
-        /* Video alanı ortalama ve yapışkan özellikler */
         .video-wrapper {
             position: sticky;
             top: 0;
             z-index: 100;
             background: var(--bg);
             padding-bottom: 10px;
-            display: flex; /* İçindeki videoyu ortalamak için */
-            justify-content: center; /* Yatayda ortalar */
+            display: flex;
+            justify-content: center; /* Videoyu yatayda ortalar */
         }
 
         video {
-            width: 50%; /* İstediğin sabit %50 genişlik */
-            max-width: 100%; /* Ekran dışına taşmayı kesin olarak engeller */
+            width: 50%; /* İstediğin boyut */
+            max-width: 100%;
             border-radius: 8px;
             background: #000;
             aspect-ratio: 16 / 9;
@@ -77,11 +73,8 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            transition: 0.3s;
             width: 100%;
         }
-
-        .btn:hover { background: var(--hover); }
 
         #playlist {
             list-style: none;
@@ -91,30 +84,20 @@
             overflow-y: auto;
             background: var(--card);
             border-radius: 8px;
+            min-height: 200px;
         }
 
         #playlist li {
             padding: 15px;
             border-bottom: 1px solid #334155;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
         }
 
-        #playlist li:active { background: #334155; }
         .active { border-left: 6px solid var(--accent); background: #1e40af !important; }
-
         .hidden { display: none !important; }
 
-        /* Mobil cihazlarda videonun çok küçük görünmemesi için ayar */
         @media (max-width: 768px) {
-            body { padding: 10px; }
-            .btn { width: 100%; }
-            video { width: 100%; } /* Mobilde tam genişlik daha iyi bir deneyim sunar */
-        }
-
-        @media (min-width: 769px) {
-            body { padding: 40px; }
-            .btn { width: auto; }
+            video { width: 100%; } /* Mobilde tam ekran olsun diye */
         }
     </style>
 </head>
@@ -125,27 +108,29 @@
         <video id="video" controls playsinline></video>
     </div>
 
-    <button class="btn" onclick="loadM3U()">Çalma listesini Yükle/Güncelle</button>
-
+    <button class="btn" onclick="loadM3U()">Listeyi Yükle</button>
     <input type="text" id="searchInput" class="search-box" placeholder="Kanal ara..." onkeyup="filterPlaylist()">
-
     <ul id="playlist"></ul>
 </div>
 
 <script>
     const video = document.getElementById('video');
     const playlistContainer = document.getElementById('playlist');
-    const searchInput = document.getElementById('searchInput');
     const m3uUrl = 'https://raw.githubusercontent.com/absol12/reptv/refs/heads/main/01.m3u';
     let hls = new Hls();
 
     async function loadM3U() {
         try {
+            // Butona basıldığında listeyi temizle (yüklendiğini anlamak için)
+            playlistContainer.innerHTML = '<li>Yükleniyor...</li>';
+            
             const response = await fetch(m3uUrl);
+            if (!response.ok) throw new Error('Ağ hatası');
             const data = await response.text();
             parseM3U(data);
         } catch (err) {
-            alert("Liste yüklenemedi.");
+            console.error(err);
+            playlistContainer.innerHTML = '<li style="color:red">Hata: Liste çekilemedi. (CORS veya Bağlantı hatası)</li>';
         }
     }
 
@@ -155,4 +140,45 @@
         let currentName = '';
 
         lines.forEach(line => {
-            line =
+            line = line.trim();
+            if (line.startsWith('#EXTINF')) {
+                currentName = line.split(',').pop();
+            } else if (line.startsWith('http')) {
+                const li = document.createElement('li');
+                li.textContent = currentName || 'Kanal';
+                li.onclick = () => playSource(line, li);
+                playlistContainer.appendChild(li);
+                currentName = '';
+            }
+        });
+    }
+
+    function playSource(url, element) {
+        document.querySelectorAll('li').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+
+        if (Hls.isSupported()) {
+            hls.destroy();
+            hls = new Hls();
+            hls.loadSource(url);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = url;
+            video.play();
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function filterPlaylist() {
+        const filter = document.getElementById('searchInput').value.toLowerCase();
+        const items = playlistContainer.getElementsByTagName('li');
+        for (let i = 0; i < items.length; i++) {
+            const text = items[i].textContent.toLowerCase();
+            items[i].classList.toggle('hidden', !text.includes(filter));
+        }
+    }
+</script>
+
+</body>
+</html>
