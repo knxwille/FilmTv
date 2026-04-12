@@ -11,6 +11,7 @@
             --card: #1e293b;
             --accent: #3b82f6;
             --hover: #2563eb;
+            --fullscreen-bg: #10b981; /* Tam ekran butonu için yeşil tonu */
             --text: #f8fafc;
         }
 
@@ -43,11 +44,11 @@
             background: var(--bg);
             padding-bottom: 10px;
             display: flex;
-            justify-content: center; /* Videoyu yatayda ortalar */
+            justify-content: center;
         }
 
         video {
-            width: 50%; /* İstediğin boyut */
+            width: 50%;
             max-width: 100%;
             border-radius: 8px;
             background: #000;
@@ -74,7 +75,16 @@
             cursor: pointer;
             font-weight: bold;
             width: 100%;
+            transition: 0.3s;
         }
+
+        /* Tam Ekran Butonuna Özel Stil */
+        .btn-fullscreen {
+            background: var(--fullscreen-bg);
+            margin-top: 2px; /* İki buton arası küçük boşluk */
+        }
+
+        .btn:hover { opacity: 0.9; }
 
         #playlist {
             list-style: none;
@@ -97,7 +107,7 @@
         .hidden { display: none !important; }
 
         @media (max-width: 768px) {
-            video { width: 100%; } /* Mobilde tam ekran olsun diye */
+            video { width: 100%; }
         }
     </style>
 </head>
@@ -109,6 +119,8 @@
     </div>
 
     <button class="btn" onclick="loadM3U()">Listeyi Yükle</button>
+    <button class="btn btn-fullscreen" onclick="openFullscreen()">Tam Ekran Yap</button>
+
     <input type="text" id="searchInput" class="search-box" placeholder="Kanal ara..." onkeyup="filterPlaylist()">
     <ul id="playlist"></ul>
 </div>
@@ -119,18 +131,26 @@
     const m3uUrl = 'https://raw.githubusercontent.com/absol12/reptv/refs/heads/main/01.m3u';
     let hls = new Hls();
 
+    // Tam Ekran Fonksiyonu
+    function openFullscreen() {
+        if (video.requestFullscreen) {
+            video.requestFullscreen();
+        } else if (video.webkitRequestFullscreen) { /* Safari */
+            video.webkitRequestFullscreen();
+        } else if (video.msRequestFullscreen) { /* IE11 */
+            video.msRequestFullscreen();
+        }
+    }
+
     async function loadM3U() {
         try {
-            // Butona basıldığında listeyi temizle (yüklendiğini anlamak için)
             playlistContainer.innerHTML = '<li>Yükleniyor...</li>';
-            
             const response = await fetch(m3uUrl);
             if (!response.ok) throw new Error('Ağ hatası');
             const data = await response.text();
             parseM3U(data);
         } catch (err) {
-            console.error(err);
-            playlistContainer.innerHTML = '<li style="color:red">Hata: Liste çekilemedi. (CORS veya Bağlantı hatası)</li>';
+            playlistContainer.innerHTML = '<li style="color:red">Hata: Liste yüklenemedi.</li>';
         }
     }
 
