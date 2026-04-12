@@ -65,7 +65,6 @@
             font-size: 16px;
         }
 
-        /* Tüm butonlar için ortak stil */
         .btn {
             background: var(--accent);
             color: white;
@@ -76,7 +75,7 @@
             font-weight: bold;
             width: 100%;
             transition: 0.3s;
-            margin-bottom: 5px; /* Butonlar arası boşluk */
+            margin-bottom: 5px;
         }
 
         .btn:hover { background: var(--hover); }
@@ -113,7 +112,7 @@
         <video id="video" controls playsinline></video>
     </div>
 
-    <button class="btn" onclick="loadM3U()">Çalma Listesini Yükle / Yenile</button>
+    <button class="btn" onclick="loadM3U()">Listeyi Yükle</button>
     <button class="btn" onclick="openFullscreen()">Tam Ekran Yap</button>
 
     <input type="text" id="searchInput" class="search-box" placeholder="Kanal ara..." onkeyup="filterPlaylist()">
@@ -123,28 +122,41 @@
 <script>
     const video = document.getElementById('video');
     const playlistContainer = document.getElementById('playlist');
+    // ÖNEMLİ: URL'nin sonuna timestamp ekleyerek önbellek (cache) sorunlarını engelliyoruz
     const m3uUrl = 'https://raw.githubusercontent.com/absol12/reptv/refs/heads/main/01.m3u';
     let hls = new Hls();
 
     function openFullscreen() {
-        if (video.requestFullscreen) {
-            video.requestFullscreen();
-        } else if (video.webkitRequestFullscreen) { /* Safari */
-            video.webkitRequestFullscreen();
-        } else if (video.msRequestFullscreen) { /* IE11 */
-            video.msRequestFullscreen();
-        }
+        if (video.requestFullscreen) { video.requestFullscreen(); }
+        else if (video.webkitRequestFullscreen) { video.webkitRequestFullscreen(); }
+        else if (video.msRequestFullscreen) { video.msRequestFullscreen(); }
     }
 
     async function loadM3U() {
         try {
             playlistContainer.innerHTML = '<li>Yükleniyor...</li>';
-            const response = await fetch(m3uUrl);
-            if (!response.ok) throw new Error('Ağ hatası');
+            
+            // Önbelleği temizlemek için küçük bir hile (cache: "no-store")
+            const response = await fetch(m3uUrl, { cache: "no-store" });
+            
+            if (!response.ok) {
+                throw new Error(`Dosya bulunamadı: ${response.status}`);
+            }
+            
             const data = await response.text();
+            
+            if (data.trim().length === 0) {
+                throw new Error("Dosya içeriği boş.");
+            }
+
             parseM3U(data);
         } catch (err) {
-            playlistContainer.innerHTML = '<li style="color:red">Hata: Liste yüklenemedi.</li>';
+            console.error("Yükleme Hatası:", err);
+            playlistContainer.innerHTML = `<li style="color:#f87171; padding: 20px;">
+                <b>Hata:</b> Liste yüklenemedi.<br>
+                <small>${err.message}</small><br><br>
+                <button onclick="loadM3U()" style="background:none; border:1px solid white; color:white; padding:5px; cursor:pointer;">Tekrar Dene</button>
+            </li>`;
         }
     }
 
@@ -152,6 +164,7 @@
         const lines = data.split('\n');
         playlistContainer.innerHTML = '';
         let currentName = '';
+        let foundChannels = 0;
 
         lines.forEach(line => {
             line = line.trim();
@@ -159,12 +172,17 @@
                 currentName = line.split(',').pop();
             } else if (line.startsWith('http')) {
                 const li = document.createElement('li');
-                li.textContent = currentName || 'Kanal';
+                li.textContent = currentName || 'Bilinmeyen Kanal';
                 li.onclick = () => playSource(line, li);
                 playlistContainer.appendChild(li);
                 currentName = '';
+                foundChannels++;
             }
         });
+
+        if (foundChannels === 0) {
+            playlistContainer.innerHTML = '<li style="padding:20px;">Listede oynatılabilir kanal bulunamadı.</li>';
+        }
     }
 
     function playSource(url, element) {
@@ -176,10 +194,10 @@
             hls = new Hls();
             hls.loadSource(url);
             hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(e => console.log("Otomatik oynatma engellendi")));
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = url;
-            video.play();
+            video.play().catch(e => console.log("Otomatik oynatma engellendi"));
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -189,3 +207,10 @@
         const items = playlistContainer.getElementsByTagName('li');
         for (let i = 0; i < items.length; i++) {
             const text = items[i].textContent.toLowerCase();
+            items[i].classList.toggle('hidden', !text.includes(filter));
+        }
+    }
+</script>
+
+</body>
+</html>
