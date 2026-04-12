@@ -14,12 +14,17 @@
             --text: #f8fafc;
         }
 
+        /* Tüm elemanlar için padding ve border'ı genişliğe dahil et */
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 10px; /* Mobilde kenar boşluğu */
+            padding: 10px;
             display: flex;
             flex-direction: column;
             height: 100vh;
@@ -34,49 +39,54 @@
             gap: 10px;
         }
 
-        /* Video alanı mobilde her zaman üstte kalmalı */
+        /* Video alanı ortalama ve yapışkan özellikler */
         .video-wrapper {
             position: sticky;
             top: 0;
             z-index: 100;
             background: var(--bg);
             padding-bottom: 10px;
+            display: flex; /* İçindeki videoyu ortalamak için */
+            justify-content: center; /* Yatayda ortalar */
         }
 
         video {
-            width: %50%;
+            width: 50%; /* İstediğin sabit %50 genişlik */
+            max-width: 100%; /* Ekran dışına taşmayı kesin olarak engeller */
             border-radius: 8px;
             background: #000;
-            aspect-ratio: 16 / 9; /* Ekran oranını korur */
+            aspect-ratio: 16 / 9;
+            display: block;
         }
 
         .search-box {
             width: 100%;
-            padding: 15px; /* Mobilde daha geniş dokunma alanı */
+            padding: 15px;
             border-radius: 8px;
             border: 1px solid #334155;
             background: var(--card);
             color: white;
-            box-sizing: border-box;
-            font-size: 16px; /* Mobilde focus olunca zoom yapmasını engeller */
+            font-size: 16px;
         }
 
         .btn {
             background: var(--accent);
-            color: white; border: none;
-            padding: 14px; /* Parmakla basıma uygun boyut */
+            color: white;
+            border: none;
+            padding: 14px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
             transition: 0.3s;
-            width: 100%; /* Mobilde tam genişlik */
+            width: 100%;
         }
 
         .btn:hover { background: var(--hover); }
 
-        /* Liste Alanı - Mobilde kaydırılabilir */
         #playlist {
-            list-style: none; padding: 0; margin: 0;
+            list-style: none;
+            padding: 0;
+            margin: 0;
             flex: 1;
             overflow-y: auto;
             background: var(--card);
@@ -87,7 +97,7 @@
             padding: 15px;
             border-bottom: 1px solid #334155;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent; /* Mobil dokunma rengini kaldırır */
+            -webkit-tap-highlight-color: transparent;
         }
 
         #playlist li:active { background: #334155; }
@@ -95,8 +105,14 @@
 
         .hidden { display: none !important; }
 
-        /* Masaüstü için küçük dokunuş */
-        @media (min-width: 768px) {
+        /* Mobil cihazlarda videonun çok küçük görünmemesi için ayar */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .btn { width: 100%; }
+            video { width: 100%; } /* Mobilde tam genişlik daha iyi bir deneyim sunar */
+        }
+
+        @media (min-width: 769px) {
             body { padding: 40px; }
             .btn { width: auto; }
         }
@@ -113,8 +129,7 @@
 
     <input type="text" id="searchInput" class="search-box" placeholder="Kanal ara..." onkeyup="filterPlaylist()">
 
-    <ul id="playlist">
-        </ul>
+    <ul id="playlist"></ul>
 </div>
 
 <script>
@@ -140,47 +155,4 @@
         let currentName = '';
 
         lines.forEach(line => {
-            line = line.trim();
-            if (line.startsWith('#EXTINF')) {
-                currentName = line.split(',').pop();
-            } else if (line.startsWith('http')) {
-                const li = document.createElement('li');
-                li.textContent = currentName || 'Kanal';
-                li.onclick = () => playSource(line, li);
-                playlistContainer.appendChild(li);
-                currentName = '';
-            }
-        });
-    }
-
-    function filterPlaylist() {
-        const filter = searchInput.value.toLowerCase();
-        const items = playlistContainer.getElementsByTagName('li');
-        for (let i = 0; i < items.length; i++) {
-            const text = items[i].textContent.toLowerCase();
-            items[i].classList.toggle('hidden', !text.includes(filter));
-        }
-    }
-
-    function playSource(url, element) {
-        document.querySelectorAll('li').forEach(el => el.classList.remove('active'));
-        element.classList.add('active');
-
-        if (Hls.isSupported()) {
-            hls.destroy();
-            hls = new Hls();
-            hls.loadSource(url);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = url;
-            video.play();
-        }
-
-        // Mobilde kanala tıklayınca sayfayı en üste (videoya) kaydır
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-</script>
-
-</body>
-</html>
+            line =
