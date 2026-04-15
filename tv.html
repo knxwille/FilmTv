@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mobil Uyumlu IPTV Player</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+    
     <style>
         :root {
             --bg: #0f172a;
@@ -47,16 +50,19 @@
             justify-content: center;
         }
 
-        video {
-            width: 50%;
+        .video-container {
+            width: 50%; 
             max-width: 100%;
-            border-radius: 8px;
-            background: #000;
-            aspect-ratio: 16 / 9;
-            display: block;
         }
 
-        /* Buton Grubu Stilleri */
+        .video-js {
+            width: 100% !important;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
         .source-selector {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -87,7 +93,6 @@
         }
 
         .btn-green { background: var(--success); }
-        .btn-green:hover { background: #059669; }
         .btn:hover { background: var(--hover); }
 
         #playlist {
@@ -111,7 +116,7 @@
         .hidden { display: none !important; }
 
         @media (max-width: 768px) {
-            video { width: 100%; }
+            .video-container { width: 100%; }
         }
     </style>
 </head>
@@ -119,7 +124,9 @@
 
 <div class="container">
     <div class="video-wrapper">
-        <video id="video" controls playsinline></video>
+        <div class="video-container">
+            <video id="my-video" class="video-js vjs-big-play-centered" controls preload="auto" playsinline></video>
+        </div>
     </div>
 
     <div class="source-selector">
@@ -136,33 +143,41 @@
 </div>
 
 <script>
-    const video = document.getElementById('video');
     const playlistContainer = document.getElementById('playlist');
-    let hls = new Hls();
+    let player;
+
+    // Sayfa yüklendiğinde player'ı başlat
+    document.addEventListener('DOMContentLoaded', function() {
+        player = videojs('my-video', {
+            fluid: true,
+            responsive: true
+        });
+    });
 
     function openFullscreen() {
-        if (video.requestFullscreen) { video.requestFullscreen(); }
-        else if (video.webkitRequestFullscreen) { video.webkitRequestFullscreen(); }
-        else if (video.msRequestFullscreen) { video.msRequestFullscreen(); }
+        if (player) {
+            if (!player.isFullscreen()) {
+                player.requestFullscreen();
+            } else {
+                player.exitFullscreen();
+            }
+        }
     }
 
     async function loadM3U(url) {
         try {
-            playlistContainer.innerHTML = '<li>Liste yükleniyor, lütfen bekleyin...</li>';
+            playlistContainer.innerHTML = '<li style="text-align:center;">Liste yükleniyor...</li>';
             
-            const response = await fetch(url, { cache: "no-store" });
-            
-            if (!response.ok) throw new Error(`Hata: ${response.status}`);
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP Hata: ${response.status}`);
             
             const data = await response.text();
-            if (data.trim().length === 0) throw new Error("Liste boş.");
-
             parseM3U(data);
         } catch (err) {
-            console.error("Yükleme Hatası:", err);
+            console.error("Yükleme hatası:", err);
             playlistContainer.innerHTML = `<li style="color:#f87171; padding: 20px;">
-                <b>Hata:</b> Liste yüklenemedi.<br>
-                <small>${err.message}</small>
+                <b>Hata:</b> Liste yüklenemedi. <br>
+                <small>İnternet bağlantınızı veya kaynağı kontrol edin.</small>
             </li>`;
         }
     }
@@ -173,10 +188,9 @@
         let currentName = '';
         let foundChannels = 0;
 
-        lines.forEach(line => {
-            line = line.trim();
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
             if (line.startsWith('#EXTINF')) {
-                // İsim alma mantığını geliştirdik
                 const nameParts = line.split(',');
                 currentName = nameParts[nameParts.length - 1];
             } else if (line.startsWith('http')) {
@@ -188,27 +202,25 @@
                 currentName = '';
                 foundChannels++;
             }
-        });
+        }
 
         if (foundChannels === 0) {
-            playlistContainer.innerHTML = '<li style="padding:20px;">Kanal bulunamadı.</li>';
+            playlistContainer.innerHTML = '<li style="padding:20px; text-align:center;">Kanal bulunamadı.</li>';
         }
     }
 
     function playSource(url, element) {
-        document.querySelectorAll('li').forEach(el => el.classList.remove('active'));
+        const listItems = document.querySelectorAll('#playlist li');
+        listItems.forEach(el => el.classList.remove('active'));
         element.classList.add('active');
 
-        if (Hls.isSupported()) {
-            hls.destroy();
-            hls = new Hls();
-            hls.loadSource(url);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(e => {}));
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = url;
-            video.play().catch(e => {});
-        }
+        let type = 'application/x-mpegURL'; // Varsayılan HLS
+        if (url.endsWith('.mp4')) type = 'video/mp4';
+        if (url.endsWith('.mpd')) type = 'application/dash+xml';
+
+        player.src({ src: url, type: type });
+        player.play().catch(e => console.warn("Otomatik oynatma engellendi:", e));
+        
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -217,7 +229,7 @@
         const items = playlistContainer.getElementsByTagName('li');
         for (let i = 0; i < items.length; i++) {
             const text = items[i].textContent.toLowerCase();
-            if(items[i].onclick) { // Sadece kanal satırlarını filtrele
+            if(items[i].onclick) {
                 items[i].classList.toggle('hidden', !text.includes(filter));
             }
         }
