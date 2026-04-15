@@ -1,225 +1,224 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPTV Player (Proxy Mode)</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPTV Player</title>
 
-    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
-    
-    <style>
-        :root {
-            --bg: #0f172a;
-            --card: #1e293b;
-            --accent: #3b82f6;
-            --danger: #ef4444;
-            --text: #f8fafc;
-        }
+<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+<script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
-        body {
-            margin: 0;
-            font-family: sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            padding-bottom: 50px;
-        }
+<style>
+:root {
+    --bg:#0f172a;
+    --card:#1e293b;
+    --accent:#3b82f6;
+    --danger:#ef4444;
+    --text:#f8fafc;
+}
 
-        .container { max-width: 800px; margin: auto; padding: 10px; }
+body {
+    margin:0;
+    font-family:sans-serif;
+    background:var(--bg);
+    color:var(--text);
+}
 
-        .video-container {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: var(--bg);
-            padding-bottom: 15px;
-            text-align: center;
-        }
+.container {
+    max-width:900px;
+    margin:auto;
+    padding:10px;
+}
 
-        .video-box {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: black;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
+/* VIDEO */
+.video-container {
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:var(--bg);
+    display:flex;
+    justify-content:center;
+    padding-bottom: 5px;
+}
 
-        .video-js { width: 100% !important; height: 100% !important; }
+.video-box {
+    width:640px; /* 320px %15 büyütülmüş hali */
+    aspect-ratio:16/9;
+    background:black;
+    border-radius:10px;
+    overflow:hidden;
+    position:relative;
+}
 
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-        }
+.video-js {
+    position:absolute !important;
+    inset:0;
+    width:100% !important;
+    height:100% !important;
+}
 
-        .btn {
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: var(--accent);
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-        }
+/* BUTTON STICKY ALANI */
+.sticky-controls {
+    position: sticky;
+    top: 215px; /* Video + padding payı */
+    z-index: 99;
+    background: var(--bg);
+    padding: 5px 0;
+}
 
-        .btn-clear { background: #475569; }
+/* BUTTONS */
+.btn {
+    width:100%;
+    margin:5px 0;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    background:var(--accent);
+    color:white;
+    cursor:pointer;
+    font-weight: bold;
+}
 
-        .search-box {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            background: var(--card);
-            color: white;
-            box-sizing: border-box;
-        }
+.btn-fs {
+    background: var(--danger); /* Tam ekran butonu farklı renkte olsun */
+}
 
-        #playlist { list-style: none; padding: 0; }
+/* SEARCH */
+.search-box {
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border-radius:8px;
+    border:none;
+    background:var(--card);
+    color:white;
+}
 
-        .kategori-header {
-            padding: 12px;
-            cursor: pointer;
-            font-weight: bold;
-            background: #1e293b;
-            margin-top: 8px;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .kategori-list { display: none; list-style: none; padding: 0; background: #111827; }
-        .kategori-list.open { display: block; }
-
-        .channel-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            border-bottom: 1px solid #1e293b;
-            cursor: pointer;
-        }
-
-        .channel-item:hover { background: #334155; }
-
-        .channel-logo { width: 30px; height: 30px; object-fit: contain; }
-        
-        .loading { padding: 20px; text-align: center; color: var(--accent); }
-        .error { padding: 20px; text-align: center; color: var(--danger); }
-    </style>
+/* CATEGORY & CHANNEL */
+.kategori-header {
+    padding:12px;
+    cursor:pointer;
+    font-weight:bold;
+    border-bottom:1px solid #334155;
+}
+.kategori-list { display:none; background:var(--card); }
+.kategori-list.open { display:block; }
+.channel-item { display:flex; align-items:center; gap:10px; padding:10px; border-bottom:1px solid #334155; cursor:pointer; }
+.channel-logo { width:30px; height:30px; object-fit:contain; background:black; }
+</style>
 </head>
+
 <body>
 
 <div class="container">
-    <div class="video-container">
-        <div class="video-box">
-            <video id="player" class="video-js vjs-big-play-centered" controls playsinline preload="auto"></video>
-        </div>
-        <p id="current-chan" style="margin-top:10px; font-size:14px; color:var(--accent)">Kanal seçilmedi</p>
-    </div>
 
-    <div class="button-grid">
-        <button class="btn" onclick="fetchWithProxy('https://iptv-org.github.io/iptv/countries/tr.m3u')">🇹🇷 Türkiye</button>
-        <button class="btn" onclick="fetchWithProxy('https://iptv-org.github.io/iptv/countries/us.m3u')">🇺🇸 Amerika</button>
-        <button class="btn" onclick="fetchWithProxy('https://iptv-org.github.io/iptv/categories/movies.m3u')">🎬 Filmler</button>
-        <button class="btn btn-clear" onclick="location.reload()">🔄 Sayfayı Yenile</button>
-    </div>
-
-    <input id="search" class="search-box" placeholder="Kanal ara..." oninput="filterChannels()">
-
-    <div id="status"></div>
-    <ul id="playlist"></ul>
+<div class="video-container">
+  <div class="video-box">
+    <video id="player" class="video-js vjs-big-play-centered" controls playsinline></video>
+  </div>
 </div>
 
-<script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+<div class="sticky-controls">
+    <button class="btn btn-fs" onclick="toggleFullscreen()">📺 Tam Ekran Yap</button>
+
+    <button class="btn" onclick="loadM3U('https://iptv-org.github.io/iptv/countries/tr.m3u')">🇹🇷 Türkiye</button>
+    <button class="btn" onclick="loadM3U('https://iptv-org.github.io/iptv/countries/us.m3u')">🇺🇸 Amerika</button>
+    <button class="btn" onclick="loadM3U('https://iptv-org.github.io/iptv/categories/movies.m3u')">🎬 Filmler</button>
+</div>
+
+<input id="search" class="search-box" placeholder="Ara..." oninput="filterChannels()">
+
+<ul id="playlist"></ul>
+
+</div>
 
 <script>
-    const player = videojs('player', { fluid: true });
-    const playlistElement = document.getElementById('playlist');
-    const statusElement = document.getElementById('status');
+let player = videojs('player',{fluid:false,aspectRatio:'16:9'});
+const playlist = document.getElementById('playlist');
 
-    // PROXY FONKSİYONU
-    async function fetchWithProxy(targetUrl) {
-        playlistElement.innerHTML = "";
-        statusElement.innerHTML = "<div class='loading'>⌛ Proxy üzerinden liste indiriliyor...</div>";
+/* FULLSCREEN FONKSİYONU */
+function toggleFullscreen(){
+    if(!player.isFullscreen()) {
+        player.requestFullscreen();
+    } else {
+        player.exitFullscreen();
+    }
+}
 
-        // Allorigins Proxy kullanımı (CORS çözümüdür)
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+/* LOAD M3U */
+async function loadM3U(url){
+    playlist.innerHTML="Yükleniyor...";
+    try {
+        let res = await fetch(url);
+        let text = await res.text();
+        parseM3U(text);
+    } catch(e) {
+        playlist.innerHTML="Hata: Liste yüklenemedi. CORS sorunu olabilir.";
+    }
+}
 
-        try {
-            const response = await fetch(proxyUrl);
-            if (!response.ok) throw new Error('Proxy yanıt vermedi.');
-            
-            const data = await response.text();
-            statusElement.innerHTML = "";
-            parseM3U(data);
-        } catch (error) {
-            statusElement.innerHTML = `<div class='error'>❌ Hata: ${error.message}<br><small>Proxy yoğun olabilir, lütfen tekrar deneyin.</small></div>`;
+function parseM3U(data){
+    let lines=data.split('\n');
+    let cats={};
+    let name="",group="Diğer",logo="";
+
+    lines.forEach(l=>{
+        l=l.trim();
+        if(l.startsWith("#EXTINF")){
+            name=l.split(",").pop();
+            let g=l.match(/group-title="([^"]+)"/);
+            group=g?g[1]:"Diğer";
+            let lg=l.match(/tvg-logo="([^"]+)"/);
+            logo=lg?lg[1]:"";
         }
-    }
-
-    function parseM3U(data) {
-        const lines = data.split('\n');
-        let categories = {};
-        let currentItem = { name: "", group: "Genel", logo: "" };
-
-        lines.forEach(line => {
-            line = line.trim();
-            if (line.startsWith("#EXTINF")) {
-                currentItem.name = line.split(",").pop() || "Bilinmeyen Kanal";
-                let gMatch = line.match(/group-title="([^"]+)"/);
-                currentItem.group = gMatch ? gMatch[1] : "Genel";
-                let lMatch = line.match(/tvg-logo="([^"]+)"/);
-                currentItem.logo = lMatch ? lMatch[1] : "";
-            } else if (line.startsWith("http")) {
-                if (!categories[currentItem.group]) categories[currentItem.group] = [];
-                categories[currentItem.group].push({
-                    name: currentItem.name,
-                    url: line,
-                    logo: currentItem.logo
-                });
-            }
-        });
-        render(categories);
-    }
-
-    function render(categories) {
-        playlistElement.innerHTML = "";
-        for (let group in categories) {
-            const header = document.createElement("li");
-            header.className = "kategori-header";
-            header.innerHTML = `<span>📂 ${group}</span> <span>${categories[group].length}</span>`;
-            
-            const list = document.createElement("ul");
-            list.className = "kategori-list";
-            header.onclick = () => list.classList.toggle("open");
-
-            categories[group].forEach(chan => {
-                const li = document.createElement("li");
-                li.className = "channel-item";
-                li.innerHTML = `<img class="channel-logo" src="${chan.logo}" onerror="this.src='https://via.placeholder.com/30?text=TV'"> <span>${chan.name}</span>`;
-                li.onclick = () => {
-                    document.getElementById('current-chan').innerText = "Oynatılıyor: " + chan.name;
-                    player.src({ src: chan.url, type: 'application/x-mpegURL' });
-                    player.play();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                };
-                list.appendChild(li);
-            });
-            playlistElement.appendChild(header);
-            playlistElement.appendChild(list);
+        else if(l.startsWith("http")){
+            if(!cats[group]) cats[group]=[];
+            cats[group].push({name,url:l,logo});
         }
-    }
+    });
+    render(cats);
+}
 
-    function filterChannels() {
-        const term = document.getElementById('search').value.toLowerCase();
-        document.querySelectorAll('.channel-item').forEach(item => {
-            const match = item.innerText.toLowerCase().includes(term);
-            item.style.display = match ? "flex" : "none";
+function render(cats){
+    playlist.innerHTML="";
+    Object.keys(cats).forEach(cat=>{
+        let header=document.createElement("li");
+        header.textContent="📂 "+cat;
+        header.className="kategori-header";
+        let list=document.createElement("ul");
+        list.className="kategori-list open";
+        header.onclick=()=>list.classList.toggle("open");
+
+        cats[cat].forEach(ch=>{
+            let li=document.createElement("li");
+            li.className="channel-item";
+            let img=document.createElement("img");
+            img.className="channel-logo";
+            img.src=ch.logo || "";
+            img.onerror=()=>img.style.display="none";
+            let span=document.createElement("span");
+            span.textContent=ch.name;
+            li.appendChild(img);
+            li.appendChild(span);
+            li.onclick=(e)=>{
+                e.stopPropagation();
+                player.src({src:ch.url,type:"application/x-mpegURL"});
+                player.play();
+            };
+            list.appendChild(li);
         });
-        if(term) document.querySelectorAll('.kategori-list').forEach(l => l.classList.add('open'));
-    }
+        playlist.appendChild(header);
+        playlist.appendChild(list);
+    });
+}
+
+function filterChannels(){
+    let q=document.getElementById('search').value.toLocaleLowerCase('tr');
+    document.querySelectorAll('.channel-item').forEach(li=>{
+        let text = li.innerText.toLocaleLowerCase('tr');
+        li.style.display = text.includes(q) ? "" : "none";
+    });
+}
 </script>
 
 </body>
