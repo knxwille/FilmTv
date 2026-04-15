@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gelişmiş IPTV Player</title>
+    <title>IPTV Player (Proxy Mode)</title>
 
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
     
@@ -18,45 +18,33 @@
 
         body {
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: sans-serif;
             background: var(--bg);
             color: var(--text);
             padding-bottom: 50px;
         }
 
-        .container {
-            max-width: 900px;
-            margin: auto;
-            padding: 10px;
-        }
+        .container { max-width: 800px; margin: auto; padding: 10px; }
 
         .video-container {
             position: sticky;
             top: 0;
             z-index: 100;
             background: var(--bg);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             padding-bottom: 15px;
-            border-bottom: 1px solid #334155;
+            text-align: center;
         }
 
         .video-box {
             width: 100%;
-            max-width: 640px;
             aspect-ratio: 16/9;
             background: black;
             border-radius: 10px;
             overflow: hidden;
-            position: relative;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
-        .video-js {
-            width: 100% !important;
-            height: 100% !important;
-        }
+        .video-js { width: 100% !important; height: 100% !important; }
 
         .button-grid {
             display: grid;
@@ -73,16 +61,8 @@
             color: white;
             cursor: pointer;
             font-weight: bold;
-            transition: opacity 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
         }
 
-        .btn:hover { opacity: 0.9; }
-
-        .btn-fullscreen { background: var(--danger); margin-top: 10px; width: 100%; max-width: 640px; }
         .btn-clear { background: #475569; }
 
         .search-box {
@@ -94,59 +74,39 @@
             background: var(--card);
             color: white;
             box-sizing: border-box;
-            outline: none;
         }
 
-        #playlist {
-            list-style: none;
-            padding: 0;
-        }
+        #playlist { list-style: none; padding: 0; }
 
         .kategori-header {
-            padding: 15px;
+            padding: 12px;
             cursor: pointer;
             font-weight: bold;
             background: #1e293b;
             margin-top: 8px;
-            border-radius: 8px;
+            border-radius: 6px;
             display: flex;
             justify-content: space-between;
-            border: 1px solid #334155;
         }
 
-        .kategori-list {
-            display: none;
-            list-style: none;
-            padding: 0;
-            background: #111827;
-            border-radius: 0 0 8px 8px;
-            margin-bottom: 5px;
-        }
-
+        .kategori-list { display: none; list-style: none; padding: 0; background: #111827; }
         .kategori-list.open { display: block; }
 
         .channel-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 15px;
+            gap: 10px;
+            padding: 10px;
             border-bottom: 1px solid #1e293b;
             cursor: pointer;
-            transition: background 0.2s;
         }
 
         .channel-item:hover { background: #334155; }
 
-        .channel-logo {
-            width: 35px;
-            height: 35px;
-            object-fit: contain;
-            background: #000;
-            border-radius: 4px;
-            border: 1px solid #475569;
-        }
-
-        .status-msg { padding: 20px; text-align: center; }
+        .channel-logo { width: 30px; height: 30px; object-fit: contain; }
+        
+        .loading { padding: 20px; text-align: center; color: var(--accent); }
+        .error { padding: 20px; text-align: center; color: var(--danger); }
     </style>
 </head>
 <body>
@@ -154,144 +114,45 @@
 <div class="container">
     <div class="video-container">
         <div class="video-box">
-            <video id="player" class="video-js vjs-big-play-centered vjs-theme-city" controls playsinline preload="auto"></video>
+            <video id="player" class="video-js vjs-big-play-centered" controls playsinline preload="auto"></video>
         </div>
-        <button class="btn btn-fullscreen" onclick="toggleFullscreen()">📺 Tam Ekran</button>
+        <p id="current-chan" style="margin-top:10px; font-size:14px; color:var(--accent)">Kanal seçilmedi</p>
     </div>
 
     <div class="button-grid">
-        <button class="btn" onclick="loadM3U('https://iptv-org.github.io/iptv/countries/tr.m3u')">🇹🇷 Türkiye</button>
-        <button class="btn btn-clear" onclick="clearPlaylist()">✖ Temizle</button>
-        <button class="btn" onclick="loadM3U('https://iptv-org.github.io/iptv/countries/us.m3u')">🇺🇸 Amerika</button>
-        <button class="btn" onclick="loadM3U('https://iptv-org.github.io/iptv/categories/movies.m3u')">🎬 Filmler</button>
+        <button class="btn" onclick="fetchWithProxy('https://iptv-org.github.io/iptv/countries/tr.m3u')">🇹🇷 Türkiye</button>
+        <button class="btn" onclick="fetchWithProxy('https://iptv-org.github.io/iptv/countries/us.m3u')">🇺🇸 Amerika</button>
+        <button class="btn" onclick="fetchWithProxy('https://iptv-org.github.io/iptv/categories/movies.m3u')">🎬 Filmler</button>
+        <button class="btn btn-clear" onclick="location.reload()">🔄 Sayfayı Yenile</button>
     </div>
 
-    <input id="search" class="search-box" placeholder="Kanal veya kategori ara..." oninput="filterChannels()">
+    <input id="search" class="search-box" placeholder="Kanal ara..." oninput="filterChannels()">
 
+    <div id="status"></div>
     <ul id="playlist"></ul>
 </div>
 
 <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
 <script>
-    // VideoJS Başlatma
-    const player = videojs('player', {
-        fluid: true,
-        playbackRates: [0.5, 1, 1.5, 2],
-        userActions: { hotkeys: true }
-    });
-
+    const player = videojs('player', { fluid: true });
     const playlistElement = document.getElementById('playlist');
+    const statusElement = document.getElementById('status');
 
-    function toggleFullscreen() {
-        if (!player.isFullscreen()) {
-            player.requestFullscreen();
-        } else {
-            player.exitFullscreen();
-        }
-    }
-
-    function clearPlaylist() {
+    // PROXY FONKSİYONU
+    async function fetchWithProxy(targetUrl) {
         playlistElement.innerHTML = "";
-        document.getElementById('search').value = "";
-    }
+        statusElement.innerHTML = "<div class='loading'>⌛ Proxy üzerinden liste indiriliyor...</div>";
 
-    async function loadM3U(url) {
-        playlistElement.innerHTML = "<li class='status-msg'>⌛ Liste yükleniyor, lütfen bekleyin...</li>";
+        // Allorigins Proxy kullanımı (CORS çözümüdür)
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
 
         try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Yayın listesine ulaşılamadı (HTTP ' + response.status + ')');
+            const response = await fetch(proxyUrl);
+            if (!response.ok) throw new Error('Proxy yanıt vermedi.');
             
             const data = await response.text();
+            statusElement.innerHTML = "";
             parseM3U(data);
         } catch (error) {
-            console.error("Hata:", error);
-            playlistElement.innerHTML = `
-                <li class='status-msg' style='color:var(--danger)'>
-                    ❌ Hata: ${error.message}<br>
-                    <small>CORS politikası veya internet bağlantısı sorunu olabilir.</small>
-                </li>`;
-        }
-    }
-
-    function parseM3U(data) {
-        const lines = data.split('\n');
-        let categories = {};
-        let currentItem = { name: "", group: "Genel", logo: "" };
-
-        lines.forEach(line => {
-            line = line.trim();
-
-            if (line.startsWith("#EXTINF")) {
-                // Kanal Adı
-                const nameParts = line.split(',');
-                currentItem.name = nameParts[nameParts.length - 1] || "İsimsiz Kanal";
-
-                // Grup/Kategori
-                const groupMatch = line.match(/group-title="([^"]+)"/);
-                currentItem.group = groupMatch ? groupMatch[1] : "Genel";
-
-                // Logo
-                const logoMatch = line.match(/tvg-logo="([^"]+)"/);
-                currentItem.logo = logoMatch ? logoMatch[1] : "";
-            } 
-            else if (line.startsWith("http")) {
-                const group = currentItem.group;
-                if (!categories[group]) categories[group] = [];
-
-                categories[group].push({
-                    name: currentItem.name,
-                    url: line,
-                    logo: currentItem.logo
-                });
-
-                // Reset for next
-                currentItem = { name: "", group: "Genel", logo: "" };
-            }
-        });
-
-        renderPlaylist(categories);
-    }
-
-    function renderPlaylist(categories) {
-        playlistElement.innerHTML = "";
-        const groups = Object.keys(categories);
-
-        if (groups.length === 0) {
-            playlistElement.innerHTML = "<li class='status-msg'>⚠️ Liste boş veya geçersiz format.</li>";
-            return;
-        }
-
-        groups.forEach(groupName => {
-            const header = document.createElement("li");
-            header.className = "kategori-header";
-            header.innerHTML = `<span>📂 ${groupName}</span> <span>${categories[groupName].length} Kanal</span>`;
-
-            const listContainer = document.createElement("ul");
-            listContainer.className = "kategori-list";
-
-            header.onclick = () => listContainer.classList.toggle("open");
-
-            categories[groupName].forEach(channel => {
-                const li = document.createElement("li");
-                li.className = "channel-item";
-                
-                const img = channel.logo 
-                    ? `<img class="channel-logo" src="${channel.logo}" onerror="this.src='https://via.placeholder.com/35?text=TV'">`
-                    : `<div class="channel-logo" style="display:flex;align-items:center;justify-content:center;background:#334155">📺</div>`;
-
-                li.innerHTML = `${img} <span>${channel.name}</span>`;
-                
-                li.onclick = () => {
-                    player.src({ type: 'application/x-mpegURL', src: channel.url });
-                    player.play().catch(e => {
-                        alert("Yayın başlatılamadı. Link kırık veya tarayıcı desteklemiyor olabilir.");
-                    });
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                };
-
-                listContainer.appendChild(li);
-            });
-
-            playlistElement.appendChild(header);
+            statusElement.innerHTML = `<div class='error'>❌ Hata: ${error.message}<br><small>Proxy yoğun olabilir, lütfen tekrar deneyin.</small
