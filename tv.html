@@ -155,4 +155,72 @@
             statusElement.innerHTML = "";
             parseM3U(data);
         } catch (error) {
-            statusElement.innerHTML = `<div class='error'>❌ Hata: ${error.message}<br><small>Proxy yoğun olabilir, lütfen tekrar deneyin.</small
+            statusElement.innerHTML = `<div class='error'>❌ Hata: ${error.message}<br><small>Proxy yoğun olabilir, lütfen tekrar deneyin.</small></div>`;
+        }
+    }
+
+    function parseM3U(data) {
+        const lines = data.split('\n');
+        let categories = {};
+        let currentItem = { name: "", group: "Genel", logo: "" };
+
+        lines.forEach(line => {
+            line = line.trim();
+            if (line.startsWith("#EXTINF")) {
+                currentItem.name = line.split(",").pop() || "Bilinmeyen Kanal";
+                let gMatch = line.match(/group-title="([^"]+)"/);
+                currentItem.group = gMatch ? gMatch[1] : "Genel";
+                let lMatch = line.match(/tvg-logo="([^"]+)"/);
+                currentItem.logo = lMatch ? lMatch[1] : "";
+            } else if (line.startsWith("http")) {
+                if (!categories[currentItem.group]) categories[currentItem.group] = [];
+                categories[currentItem.group].push({
+                    name: currentItem.name,
+                    url: line,
+                    logo: currentItem.logo
+                });
+            }
+        });
+        render(categories);
+    }
+
+    function render(categories) {
+        playlistElement.innerHTML = "";
+        for (let group in categories) {
+            const header = document.createElement("li");
+            header.className = "kategori-header";
+            header.innerHTML = `<span>📂 ${group}</span> <span>${categories[group].length}</span>`;
+            
+            const list = document.createElement("ul");
+            list.className = "kategori-list";
+            header.onclick = () => list.classList.toggle("open");
+
+            categories[group].forEach(chan => {
+                const li = document.createElement("li");
+                li.className = "channel-item";
+                li.innerHTML = `<img class="channel-logo" src="${chan.logo}" onerror="this.src='https://via.placeholder.com/30?text=TV'"> <span>${chan.name}</span>`;
+                li.onclick = () => {
+                    document.getElementById('current-chan').innerText = "Oynatılıyor: " + chan.name;
+                    player.src({ src: chan.url, type: 'application/x-mpegURL' });
+                    player.play();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                list.appendChild(li);
+            });
+            playlistElement.appendChild(header);
+            playlistElement.appendChild(list);
+        }
+    }
+
+    function filterChannels() {
+        const term = document.getElementById('search').value.toLowerCase();
+        document.querySelectorAll('.channel-item').forEach(item => {
+            const match = item.innerText.toLowerCase().includes(term);
+            item.style.display = match ? "flex" : "none";
+        });
+        if(term) document.querySelectorAll('.kategori-list').forEach(l => l.classList.add('open'));
+    }
+</script>
+
+</body>
+</html>
