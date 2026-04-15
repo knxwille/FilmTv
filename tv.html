@@ -12,6 +12,7 @@
             --accent: #3b82f6;
             --hover: #2563eb;
             --text: #f8fafc;
+            --success: #10b981;
         }
 
         * { box-sizing: border-box; }
@@ -55,6 +56,14 @@
             display: block;
         }
 
+        /* Buton Grubu Stilleri */
+        .source-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
         .search-box {
             width: 100%;
             padding: 15px;
@@ -69,15 +78,16 @@
             background: var(--accent);
             color: white;
             border: none;
-            padding: 14px;
+            padding: 12px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            width: 100%;
             transition: 0.3s;
-            margin-bottom: 5px;
+            font-size: 14px;
         }
 
+        .btn-green { background: var(--success); }
+        .btn-green:hover { background: #059669; }
         .btn:hover { background: var(--hover); }
 
         #playlist {
@@ -112,18 +122,22 @@
         <video id="video" controls playsinline></video>
     </div>
 
-    <button class="btn" onclick="loadM3U()">Listeyi Yükle</button>
-    <button class="btn" onclick="openFullscreen()">Tam Ekran Yap</button>
+    <div class="source-selector">
+        <button class="btn btn-green" onclick="loadM3U('https://iptv-org.github.io/iptv/countries/tr.m3u')">🇹🇷 Türkiye</button>
+        <button class="btn btn-green" onclick="loadM3U('https://iptv-org.github.io/iptv/languages/eng.m3u')">🇬🇧 İngilizce</button>
+        <button class="btn btn-green" onclick="loadM3U('https://iptv-org.github.io/iptv/categories/movies.m3u')">🎬 Filmler</button>
+        <button class="btn" onclick="openFullscreen()">⛶ Tam Ekran</button>
+    </div>
 
     <input type="text" id="searchInput" class="search-box" placeholder="Kanal ara..." onkeyup="filterPlaylist()">
-    <ul id="playlist"></ul>
+    <ul id="playlist">
+        <li style="text-align: center; color: #94a3b8;">Lütfen yukarıdan bir liste seçin.</li>
+    </ul>
 </div>
 
 <script>
     const video = document.getElementById('video');
     const playlistContainer = document.getElementById('playlist');
-    // ÖNEMLİ: URL'nin sonuna timestamp ekleyerek önbellek (cache) sorunlarını engelliyoruz
-    const m3uUrl = 'https://iptv-org.github.io/iptv/countries/tr.m3u';
     let hls = new Hls();
 
     function openFullscreen() {
@@ -132,30 +146,23 @@
         else if (video.msRequestFullscreen) { video.msRequestFullscreen(); }
     }
 
-    async function loadM3U() {
+    async function loadM3U(url) {
         try {
-            playlistContainer.innerHTML = '<li>Yükleniyor...</li>';
+            playlistContainer.innerHTML = '<li>Liste yükleniyor, lütfen bekleyin...</li>';
             
-            // Önbelleği temizlemek için küçük bir hile (cache: "no-store")
-            const response = await fetch(m3uUrl, { cache: "no-store" });
+            const response = await fetch(url, { cache: "no-store" });
             
-            if (!response.ok) {
-                throw new Error(`Dosya bulunamadı: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Hata: ${response.status}`);
             
             const data = await response.text();
-            
-            if (data.trim().length === 0) {
-                throw new Error("Dosya içeriği boş.");
-            }
+            if (data.trim().length === 0) throw new Error("Liste boş.");
 
             parseM3U(data);
         } catch (err) {
             console.error("Yükleme Hatası:", err);
             playlistContainer.innerHTML = `<li style="color:#f87171; padding: 20px;">
                 <b>Hata:</b> Liste yüklenemedi.<br>
-                <small>${err.message}</small><br><br>
-                <button onclick="loadM3U()" style="background:none; border:1px solid white; color:white; padding:5px; cursor:pointer;">Tekrar Dene</button>
+                <small>${err.message}</small>
             </li>`;
         }
     }
@@ -169,11 +176,14 @@
         lines.forEach(line => {
             line = line.trim();
             if (line.startsWith('#EXTINF')) {
-                currentName = line.split(',').pop();
+                // İsim alma mantığını geliştirdik
+                const nameParts = line.split(',');
+                currentName = nameParts[nameParts.length - 1];
             } else if (line.startsWith('http')) {
                 const li = document.createElement('li');
                 li.textContent = currentName || 'Bilinmeyen Kanal';
-                li.onclick = () => playSource(line, li);
+                const currentUrl = line;
+                li.onclick = () => playSource(currentUrl, li);
                 playlistContainer.appendChild(li);
                 currentName = '';
                 foundChannels++;
@@ -181,7 +191,7 @@
         });
 
         if (foundChannels === 0) {
-            playlistContainer.innerHTML = '<li style="padding:20px;">Listede oynatılabilir kanal bulunamadı.</li>';
+            playlistContainer.innerHTML = '<li style="padding:20px;">Kanal bulunamadı.</li>';
         }
     }
 
@@ -194,10 +204,10 @@
             hls = new Hls();
             hls.loadSource(url);
             hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(e => console.log("Otomatik oynatma engellendi")));
+            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(e => {}));
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = url;
-            video.play().catch(e => console.log("Otomatik oynatma engellendi"));
+            video.play().catch(e => {});
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -207,7 +217,9 @@
         const items = playlistContainer.getElementsByTagName('li');
         for (let i = 0; i < items.length; i++) {
             const text = items[i].textContent.toLowerCase();
-            items[i].classList.toggle('hidden', !text.includes(filter));
+            if(items[i].onclick) { // Sadece kanal satırlarını filtrele
+                items[i].classList.toggle('hidden', !text.includes(filter));
+            }
         }
     }
 </script>
