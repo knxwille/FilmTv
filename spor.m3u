@@ -1,0 +1,103 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="1" tvg-logo="https://digiturkairtv.com/images/channels/beINSPORTSHD1.png",beIN SPORTS HD1
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/taraftarium.m3u8
+#EXTINF:-1 tvg-id="1" tvg-logo="https://digiturkairtv.com/images/channels/beINSPORTSHD1.png",beIN SPORTS HD1
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/patron.m3u8.m3u8
+#EXTINF:-1 tvg-id="1" tvg-logo="https://digiturkairtv.com/images/channels/beINSPORTSHD1.png",beIN SPORTS HD1
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/zirve.m3u8
+#EXTINF:-1 tvg-id="2" tvg-logo="https://digiturkairtv.com/images/channels/beINSPORTSHD2.png",beIN SPORTS HD2
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/b2.m3u8
+#EXTINF:-1 tvg-id="3" tvg-logo="https://digiturkairtv.com/images/channels/beinsports3.png",beIN SPORTS HD3
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/b3.m3u8
+#EXTINF:-1 tvg-id="4" tvg-logo="https://digiturkairtv.com/images/channels/beinsports4.png",beIN SPORTS HD4
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/b4.m3u8
+#EXTINF:-1 tvg-id="5" tvg-logo="https://digiturkairtv.com/images/channels/beinsports5.png",beIN SPORTS HD5
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/b5.m3u8
+#EXTINF:-1 tvg-id="6" tvg-logo="https://digiturkairtv.com/images/channels/beINSPORTSMAX1.png",beIN SPORTS HD1 MAX
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/bm1.m3u8
+#EXTINF:-1 tvg-id="7" tvg-logo="https://digiturkairtv.com/images/channels/beINSPORTSMAX2.png",beIN SPORTS HD2 MAX
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/bm2.m3u8
+#EXTINF:-1 tvg-id="8" tvg-logo="https://yt3.ggpht.com/gvJvmHjz_AD2oWOrKpMHrc6PkrPaf9ZJn714gU1hOYxOh7XWqLbSjwniRy9wXxs0R6vyIFsCivA",S SPORT
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/ss.m3u8
+#EXTINF:-1 tvg-id="9" tvg-logo="https://yt3.ggpht.com/gvJvmHjz_AD2oWOrKpMHrc6PkrPaf9ZJn714gU1hOYxOh7XWqLbSjwniRy9wXxs0R6vyIFsCivA",S SPORT 2
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/ss2.m3u8
+#EXTINF:-1 tvg-id="11" tvg-logo="https://yt3.ggpht.com/VfKm_ajwsvkrsG4O6-5m1-LBAo8mgiAz4htzprv1zcF5liZ1Zgz5ANNbU_PYI8CE173sFIOqtQ",TivibuSPOR 1
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/t1.m3u8
+#EXTINF:-1 tvg-id="12" tvg-logo="https://yt3.ggpht.com/VfKm_ajwsvkrsG4O6-5m1-LBAo8mgiAz4htzprv1zcF5liZ1Zgz5ANNbU_PYI8CE173sFIOqtQ",TivibuSPOR 2
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/t2.m3u8
+#EXTINF:-1 tvg-id="13" tvg-logo="https://yt3.ggpht.com/VfKm_ajwsvkrsG4O6-5m1-LBAo8mgiAz4htzprv1zcF5liZ1Zgz5ANNbU_PYI8CE173sFIOqtQ",TivibuSPOR 3
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/t3.m3u8
+#EXTINF:-1 tvg-id="14" tvg-logo="https://yt3.ggpht.com/VfKm_ajwsvkrsG4O6-5m1-LBAo8mgiAz4htzprv1zcF5liZ1Zgz5ANNbU_PYI8CE173sFIOqtQ",TivibuSPOR 4
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/t4.m3u8
+#EXTINF:-1 tvg-id="15" tvg-logo="https://www.dsmart.com.tr/api/v1/public/images/kanallar/SPORSMART.png",spor SMART
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/smarts.m3u8
+#EXTINF:-1 tvg-id="16" tvg-logo="https://www.dsmart.com.tr/api/v1/public/images/kanallar/SPORSMART2.png",spor SMART 2
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/sms2.m3u8
+#EXTINF:-1 tvg-id="22" tvg-logo="https://yt3.googleusercontent.com/FCzDc31AsTFzobw8Z4QBCc8AGtKgFP4mq28RgbcLJGdVNlE0RoremvEr1XntYHFc6G0dAwU-",TRT Spor
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/trtspor.m3u8
+#EXTINF:-1 tvg-id="23" tvg-logo="https://yt3.googleusercontent.com/-8Ri3w9lxEPds96rwxSbKvO6hLWNI1_dqIO0T75xAQ9KomwH68sIXycW5hYUEljYbenIhnW1SA",TRT SPOR Yıldız
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/trtspor2.m3u8
+#EXTINF:-1 tvg-id="24" tvg-logo="https://yt3.ggpht.com/Ar9s9sZNclvmZN1l7GfIdnAQjh_ZkVhGMx6Dy5PHbq2keR9ijkPMFkk9VxZnIEnTf0MrXfSU4g",TRT 1
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/trt1.m3u8
+#EXTINF:-1 tvg-id="25" tvg-logo="https://yt3.ggpht.com/43xh3uEvLl7kAKca-zFauATzT3spixqjb9v-cYBVxBLzbcbVj42iV3Msbpd5zXwN_w7jXdnzFq8",aSPOR
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/as.m3u8
+#EXTINF:-1 tvg-id="29" tvg-logo="https://yt3.ggpht.com/rGaatci_rjFWnwKiycOnIolZYkXz8SeTNVMz4G_45i_flLh_toDIBKT6ctxlDH8b7vqW4Cc_-XY",ATV
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/atv.m3u8
+#EXTINF:-1 tvg-id="30" tvg-logo="https://yt3.googleusercontent.com/ytc/AIdro_mnwqLdHqFXbkm6QwloGNJ1EX5N3Z8klIpdSF59MRbbLxU",Tv8
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/tv8.m3u8
+#EXTINF:-1 tvg-id="31" tvg-logo="https://yt3.ggpht.com/mkjHjP6e2h9JykcMntzaTsCXCdNthlLu_EiDKE5_AifSpyLD1qkhCaJaY8g-eYbd_pwApWNfOQ",Tv8.5
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/tv85.m3u8
+#EXTINF:-1 tvg-id="33" tvg-logo="https://yt3.ggpht.com/CTYNXpw6_5CzpZbDDVMUIUsn3KwlbPGBW2w2x0Glgftvwj2YpHnCN5Wt2aDbv76eBjn-NqIKqg",EUROSPORT 1
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/eu1.m3u8
+#EXTINF:-1 tvg-id="34" tvg-logo="https://yt3.ggpht.com/CTYNXpw6_5CzpZbDDVMUIUsn3KwlbPGBW2w2x0Glgftvwj2YpHnCN5Wt2aDbv76eBjn-NqIKqg",EUROSPORT 2
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/eu2.m3u8
+#EXTINF:-1 tvg-id="43" tvg-logo="https://yt3.googleusercontent.com/UJrEza5owqpIQSdFredj9UqwNvPTEs1rLhfaf8lOxrojMcmM0QVrGm1dAl6bLv1We-3uC7Nq_g",EXXEN SPOR 1
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/ex1.m3u8
+#EXTINF:-1 tvg-id="44" tvg-logo="https://yt3.googleusercontent.com/UJrEza5owqpIQSdFredj9UqwNvPTEs1rLhfaf8lOxrojMcmM0QVrGm1dAl6bLv1We-3uC7Nq_g",EXXEN SPOR 2
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/ex2.m3u8
+#EXTINF:-1 tvg-id="45" tvg-logo="https://yt3.googleusercontent.com/UJrEza5owqpIQSdFredj9UqwNvPTEs1rLhfaf8lOxrojMcmM0QVrGm1dAl6bLv1We-3uC7Nq_g",EXXEN SPOR 3
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/ex3.m3u8
+#EXTINF:-1 tvg-id="46" tvg-logo="https://yt3.googleusercontent.com/UJrEza5owqpIQSdFredj9UqwNvPTEs1rLhfaf8lOxrojMcmM0QVrGm1dAl6bLv1We-3uC7Nq_g",EXXEN SPOR 4
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/ex4.m3u8
+#EXTINF:-1 tvg-id="47" tvg-logo="https://yt3.googleusercontent.com/UJrEza5owqpIQSdFredj9UqwNvPTEs1rLhfaf8lOxrojMcmM0QVrGm1dAl6bLv1We-3uC7Nq_g",EXXEN SPOR 5
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/ex5.m3u8
+#EXTINF:-1 tvg-id="48" tvg-logo="https://yt3.googleusercontent.com/UJrEza5owqpIQSdFredj9UqwNvPTEs1rLhfaf8lOxrojMcmM0QVrGm1dAl6bLv1We-3uC7Nq_g",EXXEN SPOR 6
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/ex6.m3u8
+#EXTINF:-1 tvg-id="49" tvg-logo="https://yt3.googleusercontent.com/UJrEza5owqpIQSdFredj9UqwNvPTEs1rLhfaf8lOxrojMcmM0QVrGm1dAl6bLv1We-3uC7Nq_g",EXXEN SPOR 7
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/ex7.m3u8
+#EXTINF:-1 tvg-id="50" tvg-logo="https://yt3.googleusercontent.com/UJrEza5owqpIQSdFredj9UqwNvPTEs1rLhfaf8lOxrojMcmM0QVrGm1dAl6bLv1We-3uC7Nq_g",EXXEN SPOR 8
+#EXTVLCOPT:http-referrer=https://taraftarium.xyz/
+http://smart.cdn-sports.workers.dev/ex8.m3u8
