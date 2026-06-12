@@ -3,38 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TXT'den Dinamik Buton Listesi</title>
+    <title>TXT'den TV ve Mobil Uyumlu Buton Listesi</title>
     <style>
+        body {
+            background-color: #141414; /* TV'lerde göz yormasın diye koyu tema */
+            color: white;
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
         .button-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            max-width: 300px;
-            margin: 20px auto;
+            gap: 12px;
+            max-width: 500px; /* TV ekranlarında çok dar kalmasın diye biraz genişlettik */
+            margin: 40px auto;
         }
 
         .dynamic-button {
             display: block;
-            padding: 12px 20px;
-            background-color: #28a745; /* Yeşil tonu */
-            color: white;
+            padding: 16px 20px; /* TV'de rahat görünmesi için butonları biraz irileştirdik */
+            background-color: #222;
+            color: #fff;
             text-align: center;
             text-decoration: none;
-            border-radius: 5px;
-            font-family: sans-serif;
+            border-radius: 8px;
+            font-size: 18px;
             font-weight: bold;
-            transition: background-color 0.2s ease;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            outline: none; /* Tarayıcının varsayılan çirkin çerçevesini kaldır */
         }
 
-        .dynamic-button:hover {
-            background-color: #218838;
+        /* HEM TELEFONDA ÜZERİNE GELİNCE (HOVER) SM-TV KUMANDASI İLE SEÇİLİNCE (FOCUS) ÇALIŞACAK ALAN */
+        .dynamic-button:hover, .dynamic-button:focus {
+            background-color: #28a745; /* Seçilen buton yeşil olur */
+            color: white;
+            border-color: #ffffff; /* Kenarları beyaz parlar */
+            transform: scale(1.03); /* TV'de seçildiğini belli etmek için hafifçe büyür */
         }
 
-        /* Hata durumunda görünecek mesaj için */
         .error-msg {
             color: red;
             text-align: center;
-            font-family: sans-serif;
         }
     </style>
 </head>
@@ -45,54 +57,49 @@
     <script>
         const container = document.getElementById("iptv-buttons");
 
-        // TXT dosyasını okuyan ve butonları basan fonksiyon
         async function loadLinksFromTXT() {
             try {
-                // 1. liste.txt dosyasını sunucudan talep ediyoruz
                 const response = await fetch('liste.txt');
-                
-                if (!response.ok) {
-                    throw new Error('Metin dosyası yüklenemedi!');
-                }
+                if (!response.ok) throw new Error('Metin dosyası yüklenemedi!');
 
-                // 2. Dosya içeriğini düz metin olarak alıyoruz
                 const textData = await response.text();
-
-                // 3. Metni satır satır bölüyoruz (\r\n veya \n uyumluluğu için regex kullandık)
                 const lines = textData.split(/\r?\n/);
 
-                // 4. Her satırı döngüyle işliyoruz
+                let buttonIndex = 1; // TV kumandası yön sıralaması için sayaç
+
                 lines.forEach(line => {
-                    // Boş satırları atla
                     if (line.trim() === '') return;
 
-                    // Satırı virgüle (,) göre isim ve url olarak ikiye ayırıyoruz
                     const parts = line.split(',');
                     
                     if (parts.length >= 2) {
                         const name = parts[0].trim();
-                        // URL içinde de virgül olma ihtimaline karşı geri kalan kısmı birleştiriyoruz
                         const url = parts.slice(1).join(',').trim(); 
 
-                        // Butonu oluşturma adımları
                         const btn = document.createElement("a");
                         btn.href = url;
                         btn.innerText = name;
                         btn.className = "dynamic-button";
-                        btn.target = "_blank"; // Yeni sekmede aç
+                        btn.target = "_blank";
+                        
+                        // TV UYUMLULUĞU İÇİN EK ENTEGRASYON:
+                        btn.setAttribute('tabindex', buttonIndex); // Kumanda yukarı/aşağı sırasını belirler
+                        buttonIndex++;
 
-                        // Container'a ekle
                         container.appendChild(btn);
                     }
                 });
 
+                // İlk butonun otomatik seçili (odaklanmış) gelmesini sağlar (TV açılır açılmaz kumanda çalışsın diye)
+                const firstBtn = container.querySelector('.dynamic-button');
+                if(firstBtn) firstBtn.focus();
+
             } catch (error) {
                 console.error('Hata:', error);
-                container.innerHTML = `<p class="error-msg">Liste yüklenirken bir hata oluştu: ${error.message}</p>`;
+                container.innerHTML = `<p class="error-msg">Liste yüklenirken bir hata oluştu.</p>`;
             }
         }
 
-        // Sayfa yüklendiğinde fonksiyonu çalıştır
         window.addEventListener('DOMContentLoaded', loadLinksFromTXT);
     </script>
 
