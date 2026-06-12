@@ -11,4 +11,5 @@ TRDizi izle,https://www.trdiziizle.tv/tr1/
 Sinek Film İzle,https://sinekfilmizle.com/
 Tek İzle,https://tekizle.com/
 Sinezy,https://sinezy.to/
+Filmci Baba,https://plusizle.com/
 Canlı yayın,tv.html
