@@ -60,30 +60,49 @@
     .button-18:active {
       background-color: #d1d1d1;
     }
+
+    /* GÜNCELLEME LİNKİ STİLİ */
+    .update-link {
+      font-family: Verdana; 
+      color: white; 
+      font-weight: bold; 
+      text-align: center;
+      text-decoration: none;
+      margin-top: 15px; /* Butonların çok dibine girmemesi için üst boşluk */
+      font-size: 1rem;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    
+    .update-link:hover, .update-link:focus {
+      opacity: 1;
+      color: #0A66C2; /* Üzerine gelince veya kumandayla seçilince belirginleşsin */
+    }
   </style>
 </head>
 
 <body>
   <div class="button-container">
-<p style="font-family: Verdana; color: white; font-weight: bold; text-align: center;">.:: SEÇ İZLE ! ::.</p>
+    <p style="font-family: Verdana; color: white; font-weight: bold; text-align: center;">.:: SEÇ İZLE ! ::.</p>
     <a href="https://www.hdfilmcehennemi.nl/" class="button-18">hdfilmcehennemi</a>
     <a href="https://www.hdfilmizle.to/" class="button-18">hdfilmizle</a>
     <a href="https://jetfilmizle.net/" class="button-18">jetfilmizle</a>
     <a href="https://filmmakinesi.so/" class="button-18">filmmakinesi</a>
     <a href="tv.html" class="button-18">Tv İzle</a>
 
-    </div>
+    <a href="FilmTv.apk" class="update-link">Uygulamayı güncelle</a>
+  </div>
+
   <script>
     // TV kumandası OK/Enter tuşu desteği
     document.addEventListener('keydown', function(e) {
       if (e.keyCode === 13) {
         const focused = document.activeElement;
-        if (focused && focused.classList.contains('button-18')) {
+        if (focused && (focused.classList.contains('button-18') || focused.classList.contains('update-link'))) {
           focused.click();
         }
       }
     });
   </script>
-<a href="FilmTv.apk" style="font-family: Verdana; color: white; font-weight: bold; text-align: center;">Uygulamayı güncelle</a>
 </body>
 </html>
