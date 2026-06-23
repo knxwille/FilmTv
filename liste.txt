@@ -12,4 +12,6 @@ Sinek Film İzle,https://sinekfilmizle.com/
 Tek İzle,https://tekizle.com/
 Sinezy,https://sinezy.to/
 Filmci Baba,https://plusizle.com/
-Canlı yayın,tv.html
+Canlı yayın,https://tv.vin/channel/national/
+Canlı yayın 2,https://tvizle.tr/
+Canlı yayın 3,https://m.mobiltv.net/
