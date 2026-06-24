@@ -116,6 +116,14 @@
                     document.activeElement.click();
                 }
             }
+            // Sayfa yüklendikten 2 saniye sonra bir kere daha odaklanmayı zorla
+setTimeout(() => {
+    const firstBtn = document.querySelector('.dynamic-button');
+    if (firstBtn) {
+        firstBtn.focus();
+        console.log("İLK ODAK ZORLANDI");
+    }
+}, 2000);
         });
     </script>
 
