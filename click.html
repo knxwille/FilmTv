@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body style="text-align:center; font-family:sans-serif; background:#222; color:#fff; padding-top:50px;">
+    <h1>Kumanda Testi</h1>
+    <div id="counter" style="font-size: 50px;">0</div>
+    <p id="status">Tuşa basın...</p>
+
+    <script>
+        let count = 0;
+        document.addEventListener('keydown', (e) => {
+            count++;
+            document.getElementById('counter').innerText = count;
+            document.getElementById('status').innerText = "Tuş algılandı: " + e.key;
+        });
+    </script>
+</body>
+</html>
