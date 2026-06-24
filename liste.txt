@@ -15,3 +15,4 @@ Filmci Baba,https://plusizle.com/
 Canlı yayın,https://tv.vin/channel/national/
 Canlı yayın 2,https://tvizle.tr/
 Canlı yayın 3,https://m.mobiltv.net/
+Click Test,https://knxwille.github.io/FilmTv/click.html
