@@ -101,15 +101,18 @@
         }
 
         document.addEventListener("keydown", function(e) {
-    // Yön tuşlarına basıldığında sayfanın kaymasını engelle
-    if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Enter"].includes(e.key)) {
-        // e.preventDefault(); // Eğer butonlar arası geçişte sorun olursa bu satırı aktif edin
+    const focusable = Array.from(document.querySelectorAll('.dynamic-button'));
+    let currentIndex = focusable.indexOf(document.activeElement);
+
+    if (e.key === "ArrowDown") {
+        e.preventDefault();
+        let nextIndex = (currentIndex + 1) % focusable.length;
+        focusable[nextIndex].focus();
+    } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        let nextIndex = (currentIndex - 1 + focusable.length) % focusable.length;
+        focusable[nextIndex].focus();
     }
-    
-    console.log("Tuşa basıldı:", e.key);
-    
-    // Debug için: Tuşa basıldığında focus nerede kontrol edelim
-    console.log("Şu an odaklanılan eleman:", document.activeElement);
 });
     </script>
 
