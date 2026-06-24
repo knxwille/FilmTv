@@ -101,6 +101,10 @@
         }
 
         window.addEventListener('DOMContentLoaded', loadLinksFromTXT);
+        document.addEventListener("keydown", function(e){
+    console.log("KEY:", e.key);
+    alert(e.key);
+});
     </script>
 
 </body>
